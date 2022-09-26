@@ -1,0 +1,19 @@
+<!-- Extend base.html -->
+{% extends "base.html" %}
+{% block title %}Admin{% endblock %}
+{%block content%}
+<h1 style="text-align: center">Users</h1>
+<!-- Display all users, with the ability to delete. -->
+<ul class="list-group list-group-flush" id="users" style="display: table; width: 600px; margin: 0 auto;">
+    {% for user in users %}
+        <li class="list-group-item" id={{ user.id }}>
+            <button type="button" class="close" onClick="deleteUser({{ user.id }})">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <p id="email" style="text-align: center">Email: {{user.email}}</p>
+            <p id="name" style="text-align: center">First Name: {{user.name}}</p>
+        </li>
+    {% endfor %}
+</ul>
+
+{% endblock %}

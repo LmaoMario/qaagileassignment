@@ -1,0 +1,39 @@
+<!-- Extending the base template to include navbar/theme -->
+{% extends "base.html" %}
+<!-- Overriding blocks defined in the base.html -->
+{% block title %}Home{% endblock %}
+{%block content%}
+<h1 style="text-align: center;">Support Tickets</h1>
+<ul class="list=group list-group-flush" id="posts">
+    <!-- Display all support tickets given to the display. -->
+    {% for post in user.posts %}
+        <!-- create a new list item for each post, with the id primary key as the ID -->
+        <!-- curly braces allows us to access Python variables -->
+        <li class="list-group-item" id={{ post.id }}>
+            <!-- Add an "X" to delete a post -->
+            <button type="button" class="close" onClick="deletePost({{ post.id }})">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <!-- Create a pencil icon to edit posts, sending to a JS event handler. -->
+            <button type="submit" class="close" style="margin-right: 15px;" id="edit-button" onClick="editText({{ post.id }})">
+                <span aria-hidden="true">&#128393;</span>
+            </button>
+            <!-- Display post. -->
+            <h2 id="title">{{post.title}}</h2>
+            <p id="info">{{post.desc}}</p>
+            <p id="author" style="text-align: right;">Created: {{post.date}}</p>
+        </li>
+    {% endfor %}
+</ul>
+
+<!-- Form to create a new post. -->
+<form method="POST">
+    <textarea name="title" id="title" class="form-control" rows="1" maxlength="150" required="required" style="resize: none;" placeholder="Title"></textarea>
+    <textarea name="desc" id="desc" class="form-control" rows="5" required="required" placeholder="Describe the problem..."></textarea>
+    <br/>
+    <!-- This "align" tag is flagging as an error locally, but functions correctly when ran. -->
+    <div align="center">
+        <button type="submit" class="btn btn-primary">Submit Ticket</button>
+    </div>
+</form>
+{% endblock %}
