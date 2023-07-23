@@ -1,0 +1,41 @@
+stages:
+  - build
+  - deploy
+
+variables:
+  APP_NAME: <APPNAME>
+  SERVER_HOST: <SERVERHOSTADDRESS>
+  SERVER_USER: <SSHSERVERUSERNAME>
+  SERVER_PORT: <SSHSERVERPORT>
+  SSH_PRIVATE_KEY: <SSHPRIVATEKEY>
+
+before_script:
+  - apt-get update -qq && apt-get install -y -qq openssh-client
+
+build:
+  stage: build
+  script:
+    - python -m venv venv
+    - source venv/bin/activate
+    - pip install -U Flask
+    - pip install -U gunicorn
+    - python main.py
+
+deploy:
+  stage: deploy
+  script:
+    - 'which ssh-agent || ( apt-get install -y -qq openssh-client )'
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan -H $SERVER_HOST >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+    - ssh $SERVER_USER@$SERVER_HOST -p $SERVER_PORT "mkdir -p /var/www/$APP_NAME"
+    - scp -P $SERVER_PORT -r * $SERVER_USER@$SERVER_HOST:/var/www/$APP_NAME/
+    - ssh $SERVER_USER@$SERVER_HOST -p $SERVER_PORT "cd /var/www/$APP_NAME && python -m venv venv && source venv/bin/activate && pip install -r requirements.txt"
+    - ssh $SERVER_USER@$SERVER_HOST -p $SERVER_PORT "cd /var/www/$APP_NAME && source venv/bin/activate && python manage.py migrate"
+    - ssh $SERVER_USER@$SERVER_HOST -p $SERVER_PORT "cd /var/www/$APP_NAME && source venv/bin/activate && python manage.py collectstatic --noinput"
+    - ssh $SERVER_USER@$SERVER_HOST -p $SERVER_PORT "sudo systemctl restart gunicorn.service"
+  only:
+    - master

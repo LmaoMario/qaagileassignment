@@ -2,10 +2,9 @@
 {% extends "base.html" %}
 {% block title %}Login{% endblock %}
 {%block content%}
-<h1>This is the login page.</h1>
 <!-- Create a form for users to enter login details. -->
-<form method="POST">
-    <h3 style="text-align: center">Login</h3>
+<form method="POST" style="width: 50%; margin: 0 auto;">
+    <h3 style="text-align: center; padding-top: 40px;">Login</h3>
     <div class="form-group">
         <label for="email">Email Address</label>
         <input type="email" class="form-control" id="email" name="email" placeholder="Enter email"/>
