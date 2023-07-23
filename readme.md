@@ -28,13 +28,16 @@ As an administrator, you can view all users on the "admin" tab and remove users.
 # OWASP mitigations
 ## Cryptographic failures
 To mitigate against this OWASP vulnerability, we use SHA256 hashing on all passwords to ensure that everything is encrypted end-to-end.
+
 Evidence: https://prnt.sc/R1EQMsCTWZas
 
 ## Broken access controls
 To mitigate against this vulnerability, we do a few things:
-- @login_required - This is an attribute we can put on functions that enforces the need for a signed-in user before any code in that function can be run. 
+@login_required - This is an attribute we can put on functions that enforces the need for a signed-in user before any code in that function can be run. 
 
 We also lock down methods to certain HTTP request types (GET, POST) as required, and do extra permission checks when needed without external input to prevent users bypassing authentication by sending requests manually with administrator-like credentials.
+
+@login_required, as well as the current_user property that is used here, is managed by Flask. They have extensive security documentation that ensures the safety of the application consuming it. This can be found at: https://flask-login.readthedocs.io/en/latest/
 
 Evidence: https://prnt.sc/aRLLBejlGML6 | https://prnt.sc/cx_xuX4YYznq 
 
@@ -47,3 +50,9 @@ Evidence: https://prnt.sc/6bFPbEJAtuKS | https://prnt.sc/Cu0phzaeT1QA | https://
 We protect against this vulnerability by limiting the number of external requests made. None of the python code makes external requests, the only external calls made are to the Bootstrap and JQuery CDN's.
 
 Evidence: https://prnt.sc/ZaefbdAJTIr- | https://prnt.sc/7xYHBZcrJrC9
+
+# References
+
+D Rachmawati, J T Tarigan, and A B C Ginting. (2018). A comparative study of Message Digest 5 (MD5) and SHA256 algorithm. Journal of Physics: Conference Series, 978(1), 012116. IOP Publishing Ltd.
+
+OWASP. (2021). OWASP Top Ten. Available at: https://owasp.org/www-project-top-ten/ (Accessed: 23 July 2023).
